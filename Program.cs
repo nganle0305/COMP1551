@@ -4,7 +4,88 @@ using System.Linq;
 
 namespace EducationCentreManagement
 {
-    /// Main Program: Controls the logic and data structures of the application.
+    // --- DOMAIN MODELS (merged into single file for Task 3 requirement) ---
+    public abstract class Person
+    {
+        public string Name { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
+        public string Role { get; set; }
+
+        public Person(string name, string phone, string email, string role)
+        {
+            Name = name;
+            Phone = phone;
+            Email = email;
+            Role = role;
+        }
+
+        public virtual void DisplayInfo()
+        {
+            Console.WriteLine($"-----------------------------------------");
+            Console.WriteLine($"Role: {Role.ToUpper()}");
+            Console.WriteLine($"Name: {Name} | Phone: {Phone} | Email: {Email}");
+        }
+    }
+
+    public class Student : Person
+    {
+        public string[] Subjects { get; set; }
+
+        public Student(string name, string phone, string email, string[] subjects)
+            : base(name, phone, email, "Student")
+        {
+            Subjects = subjects;
+        }
+
+        public override void DisplayInfo()
+        {
+            base.DisplayInfo();
+            Console.WriteLine($"Subjects: {string.Join(", ", Subjects)}");
+        }
+    }
+
+    public class Teacher : Person
+    {
+        public double Salary { get; set; }
+        public string[] SubjectsTaught { get; set; }
+
+        public Teacher(string name, string phone, string email, double salary, string[] subjects)
+            : base(name, phone, email, "Teacher")
+        {
+            Salary = salary;
+            SubjectsTaught = subjects;
+        }
+
+        public override void DisplayInfo()
+        {
+            base.DisplayInfo();
+            Console.WriteLine($"Salary: {Salary:N0} VND | Subjects: {string.Join(", ", SubjectsTaught)}");
+        }
+    }
+
+    public class AdministrativeStaff : Person
+    {
+        public double Salary { get; set; }
+        public string EmploymentType { get; set; }
+        public int WorkingHours { get; set; }
+
+        public AdministrativeStaff(string name, string phone, string email, double salary, string empType, int hours)
+            : base(name, phone, email, "Admin")
+        {
+            Salary = salary;
+            EmploymentType = empType;
+            WorkingHours = hours;
+        }
+
+        public override void DisplayInfo()
+        {
+            base.DisplayInfo();
+            Console.WriteLine($"Salary: {Salary:N0} VND | Type: {EmploymentType} | Hours: {WorkingHours}/week");
+        }
+    }
+
+    // --- APPLICATION (Program) ---
     class Program
     {
         // Data Structure: List can store an unknown number of objects (Task 3 requirement)
@@ -15,7 +96,6 @@ namespace EducationCentreManagement
             bool running = true;
             while (running)
             {
-                // Text-based menu for administrative staff interaction
                 Console.WriteLine("\n===== EDUCATION CENTRE MANAGEMENT SYSTEM =====");
                 Console.WriteLine("1. Add New Record");
                 Console.WriteLine("2. View All Records");
