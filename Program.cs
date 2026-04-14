@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace EducationCentreManagement
 {
-    // Domain classes
+    // Base class for all users (OOP: abstraction & inheritance)
     public abstract class Person
     {
         public string Name { get; set; }
@@ -28,6 +28,7 @@ namespace EducationCentreManagement
         }
     }
 
+    // Student inherits from Person
     public class Student : Person
     {
         public string[] Subjects { get; set; }
@@ -45,6 +46,7 @@ namespace EducationCentreManagement
         }
     }
 
+    // Teacher inherits from Person
     public class Teacher : Person
     {
         public double Salary { get; set; }
@@ -64,13 +66,14 @@ namespace EducationCentreManagement
         }
     }
 
-    public class AdministrativeStaff : Person
+    // Admin inherits from Person
+    public class Admin : Person
     {
         public double Salary { get; set; }
         public string EmploymentType { get; set; }
         public int WorkingHours { get; set; }
 
-        public AdministrativeStaff(string name, string phone, string email, double salary, string empType, int hours)
+        public Admin(string name, string phone, string email, double salary, string empType, int hours)
             : base(name, phone, email, "Admin")
         {
             Salary = salary;
@@ -78,6 +81,7 @@ namespace EducationCentreManagement
             WorkingHours = hours;
         }
 
+        // Display common information
         public override void DisplayInfo()
         {
             base.DisplayInfo();
@@ -88,7 +92,7 @@ namespace EducationCentreManagement
     // Main program
     class Program
     {
-        // Store all records in a list
+        // Store all users in a list (dynamic size)
         static List<Person> personList = new List<Person>();
 
         static void Main(string[] args)
@@ -108,13 +112,27 @@ namespace EducationCentreManagement
                 string choice = Console.ReadLine();
                 switch (choice)
                 {
-                    case "1": AddRecord(); break;
-                    case "2": ViewAll(); break;
-                    case "3": FilterByRole(); break;
-                    case "4": EditRecord(); break;
-                    case "5": DeleteRecord(); break;
-                    case "6": running = false; break;
-                    default: Console.WriteLine("Invalid option. Please try again."); break;
+                    case "1":
+                        AddRecord();
+                        break;
+                    case "2":
+                        ViewAll();
+                        break;
+                    case "3":
+                        FilterByRole();
+                        break;
+                    case "4":
+                        EditRecord();
+                        break;
+                    case "5":
+                        DeleteRecord();
+                        break;
+                    case "6":
+                        running = false;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid option. Please try again.");
+                        break;
                 }
             }
         }
@@ -129,26 +147,42 @@ namespace EducationCentreManagement
             Console.Write("Enter Phone: "); string phone = Console.ReadLine();
             Console.Write("Enter Email: "); string email = Console.ReadLine();
 
-            if (roleChoice == "1") // Add Student
+            switch (roleChoice)
             {
-                string[] subs = new string[3];
-                for (int i = 0; i < 3; i++) { Console.Write($"Subject {i + 1}: "); subs[i] = Console.ReadLine(); }
-                personList.Add(new Student(name, phone, email, subs));
+                case "1": // Student
+                    string[] subsStudent = new string[3];
+                    for (int i = 0; i < 3; i++)
+                    {
+                        Console.Write($"Subject {i + 1}: ");
+                        subsStudent[i] = Console.ReadLine();
+                    }
+                    personList.Add(new Student(name, phone, email, subsStudent));
+                    break;
+
+                case "2": // Teacher
+                    double salaryTeacher = ValidateDouble("Enter Salary: ");
+                    string[] subsTeacher = new string[2];
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Console.Write($"Subject Taught {i + 1}: ");
+                        subsTeacher[i] = Console.ReadLine();
+                    }
+                    personList.Add(new Teacher(name, phone, email, salaryTeacher, subsTeacher));
+                    break;
+
+                case "3": // Admin
+                    double salaryAdmin = ValidateDouble("Enter Salary: ");
+                    Console.Write("Employment Type (Full-time/Part-time): ");
+                    string type = Console.ReadLine();
+                    int hours = ValidateInt("Working Hours: ");
+                    personList.Add(new Admin(name, phone, email, salaryAdmin, type, hours));
+                    break;
+
+                default:
+                    Console.WriteLine("Invalid choice.");
+                    return;
             }
-            else if (roleChoice == "2") // Add Teacher
-            {
-                double salary = ValidateDouble("Enter Salary: ");
-                string[] subs = new string[2];
-                for (int i = 0; i < 2; i++) { Console.Write($"Subject Taught {i + 1}: "); subs[i] = Console.ReadLine(); }
-                personList.Add(new Teacher(name, phone, email, salary, subs));
-            }
-            else if (roleChoice == "3") // Add Admin
-            {
-                double salary = ValidateDouble("Enter Salary: ");
-                Console.Write("Employment Type (Full-time/Part-time): "); string type = Console.ReadLine();
-                int hours = ValidateInt("Working Hours: ");
-                personList.Add(new AdministrativeStaff(name, phone, email, salary, type, hours));
-            }
+
             Console.WriteLine("Record added successfully!");
         }
 
@@ -159,7 +193,8 @@ namespace EducationCentreManagement
             if (personList.Count == 0) { Console.WriteLine("No records found."); return; }
             foreach (var person in personList)
             {
-                person.DisplayInfo(); // Polymorphic call
+                // Polymorphism: the method behaves differently depending on the object type
+                person.DisplayInfo(); // Polymorphism
             }
         }
 
@@ -207,7 +242,7 @@ namespace EducationCentreManagement
             Console.WriteLine("\n--- Editing ---");
             Console.WriteLine("Press Enter to keep current value.");
 
-            // Common fields
+            // Edit common information
             Console.Write($"Name ({person.Name}): ");
             string newName = Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(newName))
@@ -251,7 +286,7 @@ namespace EducationCentreManagement
                 }
             }
             // Admin
-            else if (person is AdministrativeStaff admin)
+            else if (person is Admin admin)
             {
                 Console.Write($"Salary ({admin.Salary}): ");
                 string salaryInput = Console.ReadLine();
@@ -272,7 +307,7 @@ namespace EducationCentreManagement
             Console.WriteLine("Record updated.");
         }
 
-        // Validation methods
+        // Validate numeric input
         static double ValidateDouble(string prompt)
         {
             double result;
@@ -284,6 +319,7 @@ namespace EducationCentreManagement
             }
         }
 
+        // Validate integer input
         static int ValidateInt(string prompt)
         {
             int result;
