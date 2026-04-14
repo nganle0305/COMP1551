@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace EducationCentreManagement
 {
-    // --- DOMAIN MODELS (merged into single file for Task 3 requirement) ---
+    // Domain classes
     public abstract class Person
     {
         public string Name { get; set; }
@@ -85,10 +85,10 @@ namespace EducationCentreManagement
         }
     }
 
-    // --- APPLICATION (Program) ---
+    // Main program
     class Program
     {
-        // Data Structure: List can store an unknown number of objects (Task 3 requirement)
+        // Store all records in a list
         static List<Person> personList = new List<Person>();
 
         static void Main(string[] args)
@@ -119,7 +119,7 @@ namespace EducationCentreManagement
             }
         }
 
-        /// Functionality: Adding new records with data validation.
+        // Add new record
         static void AddRecord()
         {
             Console.WriteLine("\nChoose Role to Add: 1. Student | 2. Teacher | 3. Admin");
@@ -153,7 +153,7 @@ namespace EducationCentreManagement
         }
 
 
-        /// Functionality: Displaying all objects using Polymorphism.
+        // Display all records
         static void ViewAll()
         {
             if (personList.Count == 0) { Console.WriteLine("No records found."); return; }
@@ -163,7 +163,7 @@ namespace EducationCentreManagement
             }
         }
 
-        /// Functionality: Filtering objects by their rol
+        // Filter records by role
         static void FilterByRole()
         {
             Console.Write("Enter Role to filter (Student/Teacher/Admin): ");
@@ -174,7 +174,7 @@ namespace EducationCentreManagement
             else foreach (var p in filtered) p.DisplayInfo();
         }
 
-        /// Functionality: Deleting a record from the list.
+        // Delete a record
         static void DeleteRecord()
         {
             Console.Write("Enter Name of the person to delete: ");
@@ -272,7 +272,7 @@ namespace EducationCentreManagement
             Console.WriteLine("Record updated.");
         }
 
-        // --- VALIDATION HELPER METHODS ---
+        // Validation methods
         static double ValidateDouble(string prompt)
         {
             double result;
