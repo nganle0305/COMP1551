@@ -4,9 +4,7 @@ using System.Linq;
 
 namespace EducationCentreManagement
 {
-    /// <summary>
     /// Main Program: Controls the logic and data structures of the application.
-    /// </summary>
     class Program
     {
         // Data Structure: List can store an unknown number of objects (Task 3 requirement)
@@ -41,9 +39,7 @@ namespace EducationCentreManagement
             }
         }
 
-        /// <summary>
         /// Functionality: Adding new records with data validation.
-        /// </summary>
         static void AddRecord()
         {
             Console.WriteLine("\nChoose Role to Add: 1. Student | 2. Teacher | 3. Admin");
@@ -87,9 +83,7 @@ namespace EducationCentreManagement
             }
         }
 
-        /// <summary>
-        /// Functionality: Filtering objects by their role.
-        /// </summary>
+        /// Functionality: Filtering objects by their rol
         static void FilterByRole()
         {
             Console.Write("Enter Role to filter (Student/Teacher/Admin): ");
@@ -100,9 +94,7 @@ namespace EducationCentreManagement
             else foreach (var p in filtered) p.DisplayInfo();
         }
 
-        /// <summary>
         /// Functionality: Deleting a record from the list.
-        /// </summary>
         static void DeleteRecord()
         {
             Console.Write("Enter Name of the person to delete: ");
@@ -117,28 +109,87 @@ namespace EducationCentreManagement
             else Console.WriteLine("Person not found.");
         }
 
-        /// <summary>
-        /// Functionality: Editing an existing record.
-        /// </summary>
+        // Edit an existing record
         static void EditRecord()
         {
-            Console.Write("Enter Name of the person to edit: ");
+            Console.Write("Enter name to edit: ");
             string name = Console.ReadLine();
-            var person = personList.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
-            if (person != null)
+            var person = personList.FirstOrDefault(p =>
+                p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+
+            if (person == null)
             {
-                Console.Write("Enter New Phone (Leave blank to keep current): ");
-                string newPhone = Console.ReadLine();
-                if (!string.IsNullOrEmpty(newPhone)) person.Phone = newPhone;
-
-                Console.Write("Enter New Email (Leave blank to keep current): ");
-                string newEmail = Console.ReadLine();
-                if (!string.IsNullOrEmpty(newEmail)) person.Email = newEmail;
-
-                Console.WriteLine("Basic information updated.");
+                Console.WriteLine("Person not found.");
+                return;
             }
-            else Console.WriteLine("Person not found.");
+
+            Console.WriteLine("\n--- Editing ---");
+            Console.WriteLine("Press Enter to keep current value.");
+
+            // Common fields
+            Console.Write($"Name ({person.Name}): ");
+            string newName = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(newName))
+                person.Name = newName;
+
+            Console.Write($"Phone ({person.Phone}): ");
+            string newPhone = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(newPhone))
+                person.Phone = newPhone;
+
+            Console.Write($"Email ({person.Email}): ");
+            string newEmail = Console.ReadLine();
+            if (!string.IsNullOrWhiteSpace(newEmail))
+                person.Email = newEmail;
+
+            // Student
+            if (person is Student student)
+            {
+                for (int i = 0; i < student.Subjects.Length; i++)
+                {
+                    Console.Write($"Subject {i + 1} ({student.Subjects[i]}): ");
+                    string input = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(input))
+                        student.Subjects[i] = input;
+                }
+            }
+            // Teacher
+            else if (person is Teacher teacher)
+            {
+                Console.Write($"Salary ({teacher.Salary}): ");
+                string salaryInput = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(salaryInput) && double.TryParse(salaryInput, out double s))
+                    teacher.Salary = s;
+
+                for (int i = 0; i < teacher.SubjectsTaught.Length; i++)
+                {
+                    Console.Write($"Subject {i + 1} ({teacher.SubjectsTaught[i]}): ");
+                    string input = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(input))
+                        teacher.SubjectsTaught[i] = input;
+                }
+            }
+            // Admin
+            else if (person is AdministrativeStaff admin)
+            {
+                Console.Write($"Salary ({admin.Salary}): ");
+                string salaryInput = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(salaryInput) && double.TryParse(salaryInput, out double s))
+                    admin.Salary = s;
+
+                Console.Write($"Employment Type ({admin.EmploymentType}): ");
+                string typeInput = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(typeInput))
+                    admin.EmploymentType = typeInput;
+
+                Console.Write($"Working Hours ({admin.WorkingHours}): ");
+                string hourInput = Console.ReadLine();
+                if (!string.IsNullOrWhiteSpace(hourInput) && int.TryParse(hourInput, out int h))
+                    admin.WorkingHours = h;
+            }
+
+            Console.WriteLine("Record updated.");
         }
 
         // --- VALIDATION HELPER METHODS ---
